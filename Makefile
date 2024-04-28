@@ -123,6 +123,9 @@ test_codegen_%: get_schemas
 test_pkg_rest: get_schemas
 	@cd pkg && $(GO_TEST) ${PROJECT_PKGS}
 
+test_lifecycle: # get_schemas
+	@cd pkg && $(GO_TEST) github.com/pulumi/pulumi/pkg/v3/engine/lifecycletest -run RefreshLarge
+
 test_pkg:: test_pkg_rest test_codegen_dotnet test_codegen_go test_codegen_nodejs test_codegen_python
 
 subset=$(subst test_integration_,,$(word 1,$(subst !, ,$@)))
