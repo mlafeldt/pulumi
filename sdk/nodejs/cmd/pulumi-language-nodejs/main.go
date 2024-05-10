@@ -565,7 +565,7 @@ func (host *nodeLanguageHost) Run(ctx context.Context, req *pulumirpc.RunRequest
 
 	nodeBin, err := exec.LookPath("node")
 	if err != nil {
-		cmdutil.Exit(fmt.Errorf("could not find node on the $PATH: %w", err))
+		return &pulumirpc.RunResponse{Error: fmt.Sprintf("could not find node on the $PATH: %s", err.Error())}, nil
 	}
 
 	runPath := os.Getenv("PULUMI_LANGUAGE_NODEJS_RUN_PATH")
@@ -581,8 +581,12 @@ func (host *nodeLanguageHost) Run(ctx context.Context, req *pulumirpc.RunRequest
 
 	runPath, err = locateModule(ctx, runPath, programDirectory, nodeBin)
 	if err != nil {
+<<<<<<< HEAD
 		cmdutil.ExitError(
 			"It looks like the Pulumi SDK has not been installed. Have you run pulumi install?")
+=======
+		return &pulumirpc.RunResponse{Error: err.Error()}, nil
+>>>>>>> 4c732b8ab (Return error in RPC response instead of exiting in the language runtime)
 	}
 
 	// Channel producing the final response we want to issue to our caller. Will get the result of
