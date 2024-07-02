@@ -1594,13 +1594,19 @@ describe("rpc", () => {
                 return { urn: makeUrn(t, name), id: undefined, props: undefined };
             },
         },
+        invoke_depends_on: (() => {
+            return {
+                pwd: path.join(base, "075.invoke_depends_on"),
+                invoke: (ctx: any, tok: string, args: any, version: string, provider: string) => {
+                    assert.strictEqual(tok, "test:index:echo");
+                    assert.deepStrictEqual(args, { dependency: { resolved: true } });
+                    return { failures: undefined, ret: args };
+                },
+            };
+        })(),
     };
 
     for (const casename of Object.keys(cases)) {
-        // if (casename.indexOf("async_components") < 0) {
-        //     continue;
-        // }
-
         const opts: RunCase = cases[casename];
 
         afterEach(async () => {
@@ -1612,8 +1618,6 @@ describe("rpc", () => {
         testFn(`run test: ${casename} (pwd=${opts.pwd},main=${opts.main})`, async () => {
             // For each test case, run it twice: first to preview and then to update.
             for (const dryrun of [true, false]) {
-                // console.log(dryrun ? "PREVIEW:" : "UPDATE:");
-
                 // First we need to mock the resource monitor.
                 const ctx: any = {};
                 const regs: any = {};
